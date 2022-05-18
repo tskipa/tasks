@@ -1,4 +1,31 @@
 <app-modal modalId="authForm">
   <p class="text-2xl font-bold" header>Account Form</p>
-  <p>auth-form works!</p>
+  <ul class="flex flex-wrap mb-4">
+    <li class="flex-auto text-center">
+      <a
+        class="block rounded py-3 px-4 transition hover:cursor-pointer bg-blue-400"
+        [ngClass]="{
+          'hover:text-blue-400': !active,
+          'hover:text-white bg-blue-400': active
+        }"
+        (click)="toggle(true)"
+      >
+        Login
+      </a>
+    </li>
+    <li class="flex-auto text-center">
+      <a
+        class="block rounded py-3 px-4 transition hover:cursor-pointer bg-blue-400"
+        [ngClass]="{
+          'hover:text-blue-400': active,
+          'hover:text-white bg-blue-400': !active
+        }"
+        (click)="toggle(false)"
+      >
+        Register
+      </a>
+    </li>
+  </ul>
+  <app-login *ngIf="active"></app-login>
+  <app-register *ngIf="!active"></app-register>
 </app-modal>

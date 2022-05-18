@@ -7,6 +7,8 @@ import { ModalService } from 'src/app/services/modal.service';
   styleUrls: ['./auth-form.component.scss'],
 })
 export class AuthFormComponent implements OnInit, OnDestroy {
+  public active: boolean = true;
+
   constructor(private modalService: ModalService) {}
 
   ngOnInit(): void {
@@ -15,5 +17,9 @@ export class AuthFormComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.modalService.unregister('authForm');
+  }
+
+  toggle(value: boolean) {
+    this.active = value;
   }
 }
