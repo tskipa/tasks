@@ -8,7 +8,6 @@ import { NavComponent } from './nav/nav.component';
 import { HomeComponent } from './home/home.component';
 import { AboutComponent } from './about/about.component';
 import { NotFoundComponent } from './not-found/not-found.component';
-import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -18,7 +17,7 @@ import { SharedModule } from './shared/shared.module';
     AboutComponent,
     NotFoundComponent,
   ],
-  imports: [BrowserModule, AppRoutingModule, UserModule, SharedModule],
+  imports: [BrowserModule, AppRoutingModule, UserModule],
   providers: [],
   bootstrap: [AppComponent],
 })

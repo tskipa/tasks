@@ -13,6 +13,6 @@ export class NavComponent implements OnInit {
 
   openModal(e: MouseEvent) {
     e.preventDefault();
-    this.modalService.toggleVisible();
+    this.modalService.toggleVisible('authForm');
   }
 }
