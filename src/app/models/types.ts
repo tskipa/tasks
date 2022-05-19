@@ -4,6 +4,12 @@ export enum Color {
   GREEN = 'green',
 }
 
+export enum Role {
+  ADMIN = 'admin',
+  EDITOR = 'editor',
+  SUBSCRIBER = 'subscriber',
+}
+
 export enum Status {
   TODO = 'todo',
   DONE = 'done',

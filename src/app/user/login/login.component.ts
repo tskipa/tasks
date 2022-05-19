@@ -1,8 +1,8 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { delay, tap } from 'rxjs';
+import { delay, tap } from 'rxjs/operators';
 
-import { Color, AuthResp, User } from 'src/app/models/types';
+import { Color, User } from 'src/app/models/types';
 import { AuthService } from 'src/app/services/auth.service';
 import { ModalService } from 'src/app/services/modal.service';
 

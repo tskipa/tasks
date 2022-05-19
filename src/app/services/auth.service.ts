@@ -68,7 +68,12 @@ export class AuthService {
       .get(`${this.url}users/${this.user.id}`, { headers: reqHeader })
       .pipe(
         map((res) => !!res),
-        catchError(() => of(false))
+        catchError(() => {
+          localStorage.clear();
+          this.token = null;
+          this.user = null;
+          return of(false);
+        })
       );
   }
 
@@ -81,6 +86,16 @@ export class AuthService {
     if (this.redirectUrl) {
       this.router.navigateByUrl('/');
     }
+  }
+
+  getUsers(): Observable<User[]> {
+    const reqHeader = new HttpHeaders().set(
+      'authorization',
+      'Bearer ' + this.token
+    );
+    return this.http.get<User[]>(`${this.url}users`, {
+      headers: reqHeader,
+    });
   }
 
   getUser(id: string): Observable<User> {
