@@ -4,7 +4,10 @@
       >Home</a
     >
     <div class="flex flex-grow items-center">
-      <ul class="flex flex-grow mt-1 bg-secondary">
+      <ul
+        *ngIf="!(authService.isAuthenticated | async); else authorizedLinks"
+        class="flex flex-grow mt-1 bg-secondary"
+      >
         <li class="flex-grow">
           <a class="px-2 hover:text-blue-600" routerLink="/about">About</a>
         </li>
@@ -16,10 +19,25 @@
             >Login / Register</a
           >
         </li>
-        <li>
-          <a class="px-2 hover:text-blue-600" href="#">Logout</a>
-        </li>
       </ul>
+      <ng-template #authorizedLinks>
+        <ul class="flex flex-grow mt-1 bg-secondary">
+          <li>
+            <a class="px-2 hover:text-blue-600" routerLink="/about">About</a>
+          </li>
+          <li class="flex-grow">
+            <a class="px-2 hover:text-blue-600" routerLink="/tasks">Tasks</a>
+          </li>
+          <li>
+            <a
+              class="px-2 hover:text-blue-600"
+              href="#"
+              (click)="authService.logout($event)"
+              >Logout</a
+            >
+          </li>
+        </ul>
+      </ng-template>
     </div>
   </nav>
 </header>

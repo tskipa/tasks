@@ -1,0 +1,42 @@
+<div class="container mx-auto my-8">
+  <button
+    (click)="addTask($event)"
+    class="p-4 bg-gray-300 transition hover:text-blue-400"
+  >
+    <span class="text-base">Add New Task</span>
+  </button>
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <div
+      *ngFor="let task of tasks | async"
+      class="mt-6 rounded-tl-2xl rounded-br-2xl shadow-xl bg-secondary flex flex-col justify-start"
+    >
+      <div class="p-6 text-3xl bg-gray-200">
+        <p class="px-2 py-1 ml-2 text-sm rounded">
+          <b> Title:</b> {{ task.name }}
+        </p>
+        <p class="px-2 py-1 ml-2 text-sm rounded">
+          <b> Description:</b> {{ task.description }}
+        </p>
+        <p class="px-2 py-1 ml-2 text-sm rounded">
+          <b> Status:</b> {{ task.status }}
+        </p>
+      </div>
+      <div class="flex text-center text-2xl bg-gray-300 p-2 mt-auto">
+        <a
+          href="#"
+          (click)="editTask($event, task)"
+          class="flex-1 p-2 border-right border-r-2 border-gray-700 transition hover:text-blue-400"
+        >
+          <span class="text-base">Done</span>
+        </a>
+        <a
+          href="#"
+          (click)="deleteTask($event, task)"
+          class="flex-1 p-2 rounded-br-2xl transition hover:text-blue-400"
+        >
+          <span class="text-base">Delete</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

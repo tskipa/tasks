@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { delay, tap } from 'rxjs';
 
-import { Color, Token } from 'src/app/models/types';
+import { Color, AuthResp, User } from 'src/app/models/types';
 import { AuthService } from 'src/app/services/auth.service';
 import { ModalService } from 'src/app/services/modal.service';
 
@@ -34,7 +34,6 @@ export class LoginComponent implements OnInit {
         delay(1000),
         tap((res) => {
           this.inSubmission = false;
-          console.log(res);
           const status = (res as HttpErrorResponse).status;
           if (status) {
             this.alertMsg =
@@ -51,7 +50,7 @@ export class LoginComponent implements OnInit {
           this.showAlert = false;
           this.alertMsg = 'please wait...';
           this.alertColor = Color.BLUE;
-          if ((res as Token).access_token) {
+          if ((res as User).token) {
             this.modal.toggleVisible('authForm');
           }
         })

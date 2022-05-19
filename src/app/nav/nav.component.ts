@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { AuthService } from '../services/auth.service';
 import { ModalService } from '../services/modal.service';
 
 @Component({
@@ -6,10 +7,11 @@ import { ModalService } from '../services/modal.service';
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.scss'],
 })
-export class NavComponent implements OnInit {
-  constructor(private modalService: ModalService) {}
-
-  ngOnInit(): void {}
+export class NavComponent {
+  constructor(
+    private modalService: ModalService,
+    public authService: AuthService
+  ) {}
 
   openModal(e: MouseEvent) {
     e.preventDefault();

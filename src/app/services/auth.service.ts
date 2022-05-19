@@ -4,26 +4,51 @@ import {
   HttpErrorResponse,
   HttpHeaders,
 } from '@angular/common/http';
-import { catchError, tap } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
-import { Token, User } from '../models/types';
+import { User } from '../models/types';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  isAuthenticated: Observable<boolean>;
+  token: string | null;
+  user: User | null;
   private url: string = environment.baseUrl;
-  token: string | null = localStorage.getItem('tasks_access_token');
+  private redirectUrl = false;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
+    this.user = JSON.parse(
+      localStorage.getItem('auth_user_with_token') as string
+    );
+    this.token = this.user?.token as string;
+    this.isAuthenticated = this.getAuthenticated();
+    this.router.events
+      .pipe(
+        filter((e) => e instanceof NavigationEnd),
+        map(() => this.route.firstChild),
+        switchMap((route) => route?.data ?? of({}))
+      )
+      .subscribe((data) => {
+        this.redirectUrl = data['authOnly'] ?? false;
+      });
+  }
 
   loginUser(credentials: Partial<User>) {
-    return this.http.post(`${this.url}auth/login`, credentials).pipe(
+    return this.http.post<User>(`${this.url}auth/login`, credentials).pipe(
       tap((res) => {
-        this.token = (res as Token).access_token;
-        localStorage.setItem('tasks_access_token', this.token);
+        this.user = res;
+        this.token = res.token as string;
+        this.isAuthenticated = this.getAuthenticated();
+        localStorage.setItem('auth_user_with_token', JSON.stringify(res));
       }),
       catchError((err: HttpErrorResponse) => {
         return of(err);
@@ -31,15 +56,40 @@ export class AuthService {
     );
   }
 
-  verifyUser() {
+  getAuthenticated() {
+    if (!this.user) {
+      return of(false);
+    }
     const reqHeader = new HttpHeaders().set(
       'authorization',
       'Bearer ' + this.token
     );
-    return this.http.get(`${this.url}verifyUser`, { headers: reqHeader }).pipe(
-      catchError((err: HttpErrorResponse) => {
-        return of(err);
-      })
+    return this.http
+      .get(`${this.url}users/${this.user.id}`, { headers: reqHeader })
+      .pipe(
+        map((res) => !!res),
+        catchError(() => of(false))
+      );
+  }
+
+  logout(e: MouseEvent) {
+    e.preventDefault();
+    localStorage.clear();
+    this.token = null;
+    this.user = null;
+    this.isAuthenticated = this.getAuthenticated();
+    if (this.redirectUrl) {
+      this.router.navigateByUrl('/');
+    }
+  }
+
+  getUser(id: string): Observable<User> {
+    const reqHeader = new HttpHeaders().set(
+      'authorization',
+      'Bearer ' + this.token
     );
+    return this.http.get<User>(`${this.url}users/${id}`, {
+      headers: reqHeader,
+    });
   }
 }
