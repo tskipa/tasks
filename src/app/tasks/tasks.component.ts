@@ -13,6 +13,8 @@ import { ModalService } from '../services/modal.service';
   styleUrls: ['./tasks.component.scss'],
 })
 export class TasksComponent implements OnInit {
+  tasks: Task[] = [];
+
   constructor(
     public taskService: TaskService,
     private authService: AuthService,
@@ -21,6 +23,12 @@ export class TasksComponent implements OnInit {
 
   ngOnInit(): void {
     this.modalService.register('taskForm');
+    this.taskService.taskCrawler.subscribe((task) => {
+      this.tasks.push(task);
+    });
+    this.taskService.getTasks().subscribe((res) => {
+      this.tasks = res;
+    });
   }
 
   ngOnDestroy(): void {
@@ -57,9 +65,7 @@ export class TasksComponent implements OnInit {
   deleteTask(e: Event, task: Task) {
     e.preventDefault();
     this.taskService.deleteTask(task.id as string).subscribe((_res) => {
-      this.taskService.tasks = this.taskService.tasks.filter(
-        (t) => t.id !== task.id
-      );
+      this.tasks = this.tasks.filter((t) => t.id !== task.id);
     });
   }
 }

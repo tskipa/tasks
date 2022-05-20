@@ -4,7 +4,7 @@ import {
   HttpHeaders,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, of } from 'rxjs';
+import { catchError, Observable, of, Subject } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
 import { Task } from '../models/types';
@@ -16,16 +16,13 @@ import { AuthService } from './auth.service';
 export class TaskService {
   private url: string = environment.baseUrl;
   private reqHeader;
-  tasks: Task[] = [];
+  taskCrawler = new Subject<Task>();
 
   constructor(private http: HttpClient, private authService: AuthService) {
     this.reqHeader = new HttpHeaders().set(
       'authorization',
       'Bearer ' + this.authService.token
     );
-    this.getTasks().subscribe((res) => {
-      this.tasks = res;
-    });
   }
 
   getTasks(): Observable<Task[]> {

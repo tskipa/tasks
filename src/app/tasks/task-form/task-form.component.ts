@@ -87,7 +87,7 @@ export class TaskFormComponent implements OnInit {
           this.alertColor = Color.BLUE;
           if ((res as Task).creation_date) {
             this.modal.toggleVisible('taskForm');
-            this.taskService.tasks.push(res as Task);
+            this.taskService.taskCrawler.next(res as Task);
           }
         })
       )

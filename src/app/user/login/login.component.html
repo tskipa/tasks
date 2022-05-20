@@ -1,4 +1,6 @@
-<app-alert *ngIf="showAlert" [color]="alertColor"> {{ alertMsg }} </app-alert>
+<app-alert *ngIf="showAlert" [color]="alertColor">
+  {{ alertMsg }}
+</app-alert>
 
 <form
   class="bg-gray-600 -mx-2 p-2 rounded"
@@ -13,7 +15,6 @@
       name="email"
       [(ngModel)]="credentials.email"
       class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition duration-500 focus:outline-none rounded bg-transparent focus:border-blue-400"
-      placeholder="Enter Email"
       required
       pattern="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
     />
@@ -32,7 +33,6 @@
       name="password"
       [(ngModel)]="credentials.password"
       class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition duration-500 focus:outline-none rounded bg-transparent focus:border-blue-400"
-      placeholder="Enter Password"
       required
     />
     <p
