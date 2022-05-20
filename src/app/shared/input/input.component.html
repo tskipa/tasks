@@ -1,7 +1,7 @@
 <input
   type="text"
   [formControl]="control"
-  class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition duration-500 focus:outline-none rounded bg-transparent focus:border-indigo-400"
+  class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition duration-500 focus:outline-none rounded bg-transparent focus:border-blue-400"
   [placeholder]="placeholder"
   [type]="type"
 />
@@ -12,5 +12,11 @@
   <p *ngIf="control.getError('minlength')" class="text-red-400 text-sm">
     field should have min lenth of
     {{ control.getError("minlength")["requiredLength"] }}
+  </p>
+  <p *ngIf="control.getError('email')" class="text-red-400 text-sm">
+    email format is invalid
+  </p>
+  <p *ngIf="control.getError('noPasswordMatch')" class="text-red-400 text-sm">
+    passwords do not match
   </p>
 </ng-container>

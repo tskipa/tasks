@@ -1,10 +1,12 @@
 <select
   type="text"
   [formControl]="control"
-  class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition duration-500 focus:outline-none rounded bg-transparent focus:border-indigo-400"
+  class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition duration-500 focus:outline-none rounded bg-transparent focus:border-blue-400"
 >
   <option></option>
-  <option *ngFor="let opt of data">{{ opt.email || opt }}</option>
+  <option class="text-gray-800" *ngFor="let opt of data">
+    {{ opt.email || opt }}
+  </option>
 </select>
 <ng-container *ngIf="control.touched && control.dirty">
   <p *ngIf="control.getError('required')" class="text-red-400 text-sm">

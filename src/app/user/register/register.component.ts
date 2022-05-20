@@ -6,6 +6,7 @@ import { delay, tap } from 'rxjs/operators';
 import { Color, User } from 'src/app/models/types';
 import { AuthService } from 'src/app/services/auth.service';
 import { ModalService } from 'src/app/services/modal.service';
+import { PasswordMatch } from '../validators/password-match';
 
 @Component({
   selector: 'app-register',
@@ -30,13 +31,16 @@ export class RegisterComponent implements OnInit {
 
   constructor(private auth: AuthService, private modal: ModalService) {}
 
-  registrationForm = new FormGroup({
-    name: this.name,
-    email: this.email,
-    role: this.role,
-    password: this.password,
-    confirmPassword: this.confirmPassword,
-  });
+  registrationForm = new FormGroup(
+    {
+      name: this.name,
+      email: this.email,
+      role: this.role,
+      password: this.password,
+      confirmPassword: this.confirmPassword,
+    },
+    [PasswordMatch.verify]
+  );
 
   ngOnInit(): void {}
 
