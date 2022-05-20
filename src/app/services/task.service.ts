@@ -15,25 +15,21 @@ import { AuthService } from './auth.service';
 })
 export class TaskService {
   private url: string = environment.baseUrl;
-  private reqHeader;
   taskCrawler = new Subject<Task>();
 
-  constructor(private http: HttpClient, private authService: AuthService) {
-    this.reqHeader = new HttpHeaders().set(
-      'authorization',
-      'Bearer ' + this.authService.token
-    );
-  }
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   getTasks(): Observable<Task[]> {
     return this.http.get<Task[]>(`${this.url}tasks`, {
-      headers: this.reqHeader,
+      headers: this.authService.reqHeader,
     });
   }
 
   saveTask(task: Partial<Task>) {
     return this.http
-      .post<Task>(`${this.url}tasks`, task, { headers: this.reqHeader })
+      .post<Task>(`${this.url}tasks`, task, {
+        headers: this.authService.reqHeader,
+      })
       .pipe(
         catchError((err: HttpErrorResponse) => {
           return of(err);
@@ -44,7 +40,7 @@ export class TaskService {
   updateTask(task: Partial<Task>) {
     return this.http
       .put<Task>(`${this.url}tasks/${task.id}`, task, {
-        headers: this.reqHeader,
+        headers: this.authService.reqHeader,
       })
       .pipe(
         catchError((err: HttpErrorResponse) => {
@@ -55,7 +51,7 @@ export class TaskService {
 
   deleteTask(id: string) {
     return this.http.delete<Task>(`${this.url}tasks/${id}`, {
-      headers: this.reqHeader,
+      headers: this.authService.reqHeader,
     });
   }
 }

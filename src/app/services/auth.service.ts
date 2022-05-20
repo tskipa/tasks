@@ -18,6 +18,7 @@ export class AuthService {
   isAuthenticated: Observable<boolean>;
   token: string | null;
   user: User | null;
+  reqHeader;
   userCrawler = new BehaviorSubject<boolean>(false);
   private url: string = environment.baseUrl;
   private redirectUrl = false;
@@ -31,7 +32,17 @@ export class AuthService {
       localStorage.getItem('auth_user_with_token') as string
     );
     this.token = this.user?.token as string;
+    this.reqHeader = new HttpHeaders().set(
+      'authorization',
+      'Bearer ' + this.token
+    );
     this.isAuthenticated = this.userCrawler.pipe(
+      tap(() => {
+        this.reqHeader = new HttpHeaders().set(
+          'authorization',
+          'Bearer ' + this.token
+        );
+      }),
       switchMap(() => this.getAuthenticated())
     );
     this.router.events
@@ -77,12 +88,12 @@ export class AuthService {
     if (!this.user) {
       return of(false);
     }
-    const reqHeader = new HttpHeaders().set(
-      'authorization',
-      'Bearer ' + this.token
-    );
     return this.http
-      .post(`${this.url}user`, { id: this.user.id }, { headers: reqHeader })
+      .post(
+        `${this.url}user`,
+        { id: this.user.id },
+        { headers: this.reqHeader }
+      )
       .pipe(
         map((res) => !!res),
         catchError(() => {
@@ -106,22 +117,14 @@ export class AuthService {
   }
 
   getUsers(): Observable<User[]> {
-    const reqHeader = new HttpHeaders().set(
-      'authorization',
-      'Bearer ' + this.token
-    );
     return this.http.get<User[]>(`${this.url}users`, {
-      headers: reqHeader,
+      headers: this.reqHeader,
     });
   }
 
   getUser(id: string): Observable<User> {
-    const reqHeader = new HttpHeaders().set(
-      'authorization',
-      'Bearer ' + this.token
-    );
     return this.http.get<User>(`${this.url}users/${id}`, {
-      headers: reqHeader,
+      headers: this.reqHeader,
     });
   }
 }
