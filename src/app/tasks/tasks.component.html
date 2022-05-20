@@ -34,7 +34,10 @@
           <b> Status:</b> {{ task.status }}
         </p>
       </div>
-      <div class="flex text-center text-2xl bg-gray-300 p-2 mt-auto">
+      <div
+        *ngIf="isEditor() || isAdmin()"
+        class="flex text-center text-2xl bg-gray-300 p-2 mt-auto"
+      >
         <a
           (click)="editTask($event, task)"
           class="flex-1 p-2 transition"

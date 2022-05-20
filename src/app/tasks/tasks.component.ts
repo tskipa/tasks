@@ -56,6 +56,10 @@ export class TasksComponent implements OnInit {
     return this.authService.user?.role === Role.ADMIN;
   }
 
+  isEditor(): boolean {
+    return this.authService.user?.role === Role.EDITOR;
+  }
+
   addTask(e: Event) {
     e.preventDefault();
     this.modalService.toggleVisible('taskForm');
