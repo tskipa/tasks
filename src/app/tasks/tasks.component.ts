@@ -14,6 +14,8 @@ import { ModalService } from '../services/modal.service';
 })
 export class TasksComponent implements OnInit {
   tasks: Task[] = [];
+  allUserTasks: Task[] = [];
+  checked = true;
 
   constructor(
     public taskService: TaskService,
@@ -24,11 +26,26 @@ export class TasksComponent implements OnInit {
   ngOnInit(): void {
     this.modalService.register('taskForm');
     this.taskService.taskCrawler.subscribe((task) => {
-      this.tasks.push(task);
+      this.allUserTasks.push(task);
+      if (task.userId === this.authService.user?.id) {
+        this.tasks.push(task);
+      }
     });
     this.taskService.getTasks().subscribe((res) => {
-      this.tasks = res;
+      this.allUserTasks = res;
+      this.tasks = this.allUserTasks.filter(
+        (task) => task.userId === this.authService.user?.id
+      );
     });
+  }
+
+  toggleTasks() {
+    this.checked = !this.checked;
+    this.tasks = this.checked
+      ? this.allUserTasks.filter(
+          (task) => task.userId === this.authService.user?.id
+        )
+      : this.allUserTasks;
   }
 
   ngOnDestroy(): void {
