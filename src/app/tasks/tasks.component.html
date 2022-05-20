@@ -7,16 +7,17 @@
     >
       <span class="text-base">Add New Task</span>
     </button>
-    <input
-      type="checkbox"
-      [checked]="checked"
-      *ngIf="isAdmin()"
-      (change)="toggleTasks()"
-      class="ml-4 mt-3 w-8 h-8"
-    />
-    <span class="px-2 py-1 ml-2 text-2xl flex-grow text-end">{{
-      checked ? "My Tasks" : "All Tasks"
-    }}</span>
+    <div class="flex bg-gray-300 p-3 mx-3">
+      <select
+        type="text"
+        *ngIf="isAdmin()"
+        (change)="toggleTasks()"
+        class="px-4 text-gray-800 transition duration-500 focus:outline-none rounded bg-transparent focus:border-blue-400"
+      >
+        <option>My Tasks</option>
+        <option>All Tasks</option>
+      </select>
+    </div>
   </div>
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
     <div
