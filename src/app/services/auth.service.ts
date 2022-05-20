@@ -5,7 +5,7 @@ import {
   HttpHeaders,
 } from '@angular/common/http';
 import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
 import { User } from '../models/types';
@@ -18,6 +18,7 @@ export class AuthService {
   isAuthenticated: Observable<boolean>;
   token: string | null;
   user: User | null;
+  userCrawler = new BehaviorSubject<boolean>(false);
   private url: string = environment.baseUrl;
   private redirectUrl = false;
 
@@ -30,7 +31,9 @@ export class AuthService {
       localStorage.getItem('auth_user_with_token') as string
     );
     this.token = this.user?.token as string;
-    this.isAuthenticated = this.getAuthenticated();
+    this.isAuthenticated = this.userCrawler.pipe(
+      switchMap(() => this.getAuthenticated())
+    );
     this.router.events
       .pipe(
         filter((e) => e instanceof NavigationEnd),
@@ -47,7 +50,7 @@ export class AuthService {
       tap((res) => {
         this.user = res;
         this.token = res.token as string;
-        this.isAuthenticated = this.getAuthenticated();
+        this.userCrawler.next(true);
         localStorage.setItem('auth_user_with_token', JSON.stringify(res));
       }),
       catchError((err: HttpErrorResponse) => {
@@ -61,7 +64,7 @@ export class AuthService {
       tap((res) => {
         this.user = res;
         this.token = res.token as string;
-        this.isAuthenticated = this.getAuthenticated();
+        this.userCrawler.next(true);
         localStorage.setItem('auth_user_with_token', JSON.stringify(res));
       }),
       catchError((err: HttpErrorResponse) => {
@@ -83,7 +86,7 @@ export class AuthService {
       .pipe(
         map((res) => !!res),
         catchError(() => {
-          localStorage.clear();
+          localStorage.removeItem('auth_user_with_token');
           this.token = null;
           this.user = null;
           return of(false);
@@ -93,10 +96,10 @@ export class AuthService {
 
   logout(e: MouseEvent) {
     e.preventDefault();
-    localStorage.clear();
+    localStorage.removeItem('auth_user_with_token');
     this.token = null;
     this.user = null;
-    this.isAuthenticated = this.getAuthenticated();
+    this.userCrawler.next(false);
     if (this.redirectUrl) {
       this.router.navigateByUrl('/');
     }
