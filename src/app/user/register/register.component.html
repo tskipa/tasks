@@ -1,1 +1,47 @@
-<p>register works!</p>
+<app-alert *ngIf="showAlert" [color]="alertColor"> {{ alertMsg }} </app-alert>
+
+<form
+  class="bg-gray-600 -mx-2 p-2 rounded"
+  [formGroup]="registrationForm"
+  (ngSubmit)="register()"
+>
+  <div class="mb-3">
+    <label class="inline-block mb-2">Name</label>
+    <app-input [control]="name" placeholder="Enter Name"></app-input>
+  </div>
+  <div class="mb-3">
+    <label class="inline-block mb-2">Email</label>
+    <app-input
+      [control]="email"
+      placeholder="Enter Email"
+      type="email"
+    ></app-input>
+  </div>
+  <div class="mb-3">
+    <label class="inline-block mb-2">Role</label>
+    <app-select [control]="role" [data]="roles"></app-select>
+  </div>
+  <div class="mb-3">
+    <label class="inline-block mb-2">Password</label>
+    <app-input
+      [control]="password"
+      placeholder="Enter Password"
+      type="password"
+    ></app-input>
+  </div>
+  <div class="mb-3">
+    <label class="inline-block mb-2">Confirm Password</label>
+    <app-input
+      [control]="confirmPassword"
+      placeholder="Confirm Password"
+      type="password"
+    ></app-input>
+  </div>
+  <button
+    type="submit"
+    [disabled]="registrationForm.invalid || inSubmission"
+    class="block w-full disabled:opacity-50 bg-green-400 text-white py-1.5 px-3 rounded transition hover:bg-green-500 disabled:bg-green-300"
+  >
+    Submit
+  </button>
+</form>

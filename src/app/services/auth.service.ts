@@ -42,6 +42,20 @@ export class AuthService {
       });
   }
 
+  createUser(user: Partial<User>) {
+    return this.http.post<User>(`${this.url}auth/register`, user).pipe(
+      tap((res) => {
+        this.user = res;
+        this.token = res.token as string;
+        this.isAuthenticated = this.getAuthenticated();
+        localStorage.setItem('auth_user_with_token', JSON.stringify(res));
+      }),
+      catchError((err: HttpErrorResponse) => {
+        return of(err);
+      })
+    );
+  }
+
   loginUser(credentials: Partial<User>) {
     return this.http.post<User>(`${this.url}auth/login`, credentials).pipe(
       tap((res) => {
@@ -65,7 +79,7 @@ export class AuthService {
       'Bearer ' + this.token
     );
     return this.http
-      .get(`${this.url}users/${this.user.id}`, { headers: reqHeader })
+      .post(`${this.url}user`, { id: this.user.id }, { headers: reqHeader })
       .pipe(
         map((res) => !!res),
         catchError(() => {
