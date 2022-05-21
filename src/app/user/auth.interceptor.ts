@@ -31,11 +31,13 @@ export class AuthInterceptor implements HttpInterceptor {
             err instanceof HttpErrorResponse &&
             (err.status === 401 || err.status === 403)
           ) {
-            localStorage.removeItem('auth_user_with_token');
-            this.authService.user = null;
-            this.router
-              .navigate(['/'], { replaceUrl: true })
-              .finally(() => this.modalService.toggleVisible('authForm'));
+            if (this.authService.user) {
+              localStorage.removeItem('auth_user_with_token');
+              this.authService.user = null;
+              this.router
+                .navigate(['/'], { replaceUrl: true })
+                .finally(() => this.modalService.toggleVisible('authForm'));
+            }
           }
         },
       })
