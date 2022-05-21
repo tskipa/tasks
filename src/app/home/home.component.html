@@ -5,8 +5,8 @@
     <div class="text-center px-20 py-60 w-full md:w-8/12 mx-auto">
       <h1 class="text-7xl font-bold uppercase mb-2">Welcome!</h1>
       <p>
-        One place to create, administer or simply view the tasks. Please sign in
-        to get started!
+        One place to create, administer or simply view the tasks.
+        {{ authService.user ? "" : "Please sign into get started!" }}
       </p>
     </div>
   </div>

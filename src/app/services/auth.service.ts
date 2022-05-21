@@ -5,7 +5,7 @@ import {
   HttpHeaders,
 } from '@angular/common/http';
 import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
 import { User } from '../models/types';
@@ -15,11 +15,8 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
   providedIn: 'root',
 })
 export class AuthService {
-  isAuthenticated: Observable<boolean>;
-  token: string | null;
   user: User | null;
-  reqHeader = new HttpHeaders();
-  userEvents = new BehaviorSubject<boolean>(true);
+  reqHeader: HttpHeaders;
   private url: string = environment.baseUrl;
   private redirectUrl = false;
 
@@ -31,16 +28,11 @@ export class AuthService {
     this.user = JSON.parse(
       localStorage.getItem('auth_user_with_token') as string
     );
-    this.token = this.user?.token as string;
-    this.isAuthenticated = this.userEvents.pipe(
-      switchMap(() => {
-        this.reqHeader = new HttpHeaders().set(
-          `authorization`,
-          `Bearer ${this.token}`
-        );
-        return this.getAuthenticated();
-      })
+    this.reqHeader = new HttpHeaders().set(
+      `authorization`,
+      `Bearer ${this.user?.token}`
     );
+    this.getAuthenticated();
     this.router.events
       .pipe(
         filter((e) => e instanceof NavigationEnd),
@@ -56,9 +48,11 @@ export class AuthService {
     return this.http.post<User>(`${this.url}auth/register`, user).pipe(
       tap((res) => {
         this.user = res;
-        this.token = res.token as string;
         localStorage.setItem('auth_user_with_token', JSON.stringify(res));
-        this.userEvents.next(true);
+        this.reqHeader = new HttpHeaders().set(
+          `authorization`,
+          `Bearer ${this.user?.token}`
+        );
       }),
       catchError((err: HttpErrorResponse) => {
         return of(err);
@@ -70,9 +64,11 @@ export class AuthService {
     return this.http.post<User>(`${this.url}auth/login`, credentials).pipe(
       tap((res) => {
         this.user = res;
-        this.token = res.token as string;
         localStorage.setItem('auth_user_with_token', JSON.stringify(res));
-        this.userEvents.next(true);
+        this.reqHeader = new HttpHeaders().set(
+          `authorization`,
+          `Bearer ${this.user?.token}`
+        );
       }),
       catchError((err: HttpErrorResponse) => {
         return of(err);
@@ -84,30 +80,17 @@ export class AuthService {
     if (!this.user) {
       return of(false);
     }
-    return this.http
-      .post(
-        `${this.url}user`,
-        { id: this.user.id },
-        { headers: this.reqHeader }
-      )
-      .pipe(
-        map(() => true),
-        catchError(() => {
-          localStorage.removeItem('auth_user_with_token');
-          this.token = null;
-          this.user = null;
-          this.userEvents.next(false);
-          return of(false);
-        })
-      );
+    return this.http.post(
+      `${this.url}user`,
+      { id: this.user.id },
+      { headers: this.reqHeader }
+    );
   }
 
-  logout(e: MouseEvent) {
-    e.preventDefault();
+  logout(e?: MouseEvent) {
+    e?.preventDefault();
     localStorage.removeItem('auth_user_with_token');
-    this.token = null;
     this.user = null;
-    this.userEvents.next(false);
     if (this.redirectUrl) {
       this.router.navigateByUrl('/');
     }
