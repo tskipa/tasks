@@ -25,27 +25,25 @@ export class TasksComponent implements OnInit {
 
   ngOnInit(): void {
     this.modalService.register('taskForm');
-    this.taskService.taskCrawler.subscribe((task) => {
-      this.allUserTasks.push(task);
-      if (task.userId === this.authService.user?.id) {
-        this.tasks.push(task);
-      }
-    });
     this.taskService.getTasks().subscribe((res) => {
       this.allUserTasks = res;
       this.tasks = this.allUserTasks.filter(
         (task) => task.userId === this.authService.user?.id
       );
     });
+    this.taskService.taskCrawler.subscribe((newTask) => {
+      this.allUserTasks.push(newTask);
+      this.tasks = this.allUserTasks.filter(
+        (task) => !this.checked || task.userId === this.authService.user?.id
+      );
+    });
   }
 
   toggleTasks() {
     this.checked = !this.checked;
-    this.tasks = this.checked
-      ? this.allUserTasks.filter(
-          (task) => task.userId === this.authService.user?.id
-        )
-      : this.allUserTasks;
+    this.tasks = this.allUserTasks.filter(
+      (task) => !this.checked || task.userId === this.authService.user?.id
+    );
   }
 
   ngOnDestroy(): void {
@@ -83,10 +81,15 @@ export class TasksComponent implements OnInit {
     }
   }
 
-  deleteTask(e: Event, task: Task) {
+  deleteTask(e: Event, removedTask: Task) {
     e.preventDefault();
-    this.taskService.deleteTask(task.id as string).subscribe((_res) => {
-      this.tasks = this.tasks.filter((t) => t.id !== task.id);
+    this.taskService.deleteTask(removedTask.id as string).subscribe(() => {
+      this.allUserTasks = this.allUserTasks.filter(
+        (task) => task.id !== removedTask.id
+      );
+      this.tasks = this.allUserTasks.filter(
+        (task) => !this.checked || task.userId === this.authService.user?.id
+      );
     });
   }
 }
