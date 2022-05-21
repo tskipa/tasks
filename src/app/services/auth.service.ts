@@ -18,8 +18,8 @@ export class AuthService {
   isAuthenticated: Observable<boolean>;
   token: string | null;
   user: User | null;
-  reqHeader;
-  userCrawler = new BehaviorSubject<boolean>(false);
+  reqHeader = new HttpHeaders();
+  userEvents = new BehaviorSubject<boolean>(true);
   private url: string = environment.baseUrl;
   private redirectUrl = false;
 
@@ -32,18 +32,14 @@ export class AuthService {
       localStorage.getItem('auth_user_with_token') as string
     );
     this.token = this.user?.token as string;
-    this.reqHeader = new HttpHeaders().set(
-      'authorization',
-      'Bearer ' + this.token
-    );
-    this.isAuthenticated = this.userCrawler.pipe(
-      tap(() => {
+    this.isAuthenticated = this.userEvents.pipe(
+      switchMap(() => {
         this.reqHeader = new HttpHeaders().set(
-          'authorization',
-          'Bearer ' + this.token
+          `authorization`,
+          `Bearer ${this.token}`
         );
-      }),
-      switchMap(() => this.getAuthenticated())
+        return this.getAuthenticated();
+      })
     );
     this.router.events
       .pipe(
@@ -61,8 +57,8 @@ export class AuthService {
       tap((res) => {
         this.user = res;
         this.token = res.token as string;
-        this.userCrawler.next(true);
         localStorage.setItem('auth_user_with_token', JSON.stringify(res));
+        this.userEvents.next(true);
       }),
       catchError((err: HttpErrorResponse) => {
         return of(err);
@@ -75,8 +71,8 @@ export class AuthService {
       tap((res) => {
         this.user = res;
         this.token = res.token as string;
-        this.userCrawler.next(true);
         localStorage.setItem('auth_user_with_token', JSON.stringify(res));
+        this.userEvents.next(true);
       }),
       catchError((err: HttpErrorResponse) => {
         return of(err);
@@ -95,11 +91,12 @@ export class AuthService {
         { headers: this.reqHeader }
       )
       .pipe(
-        map((res) => !!res),
+        map(() => true),
         catchError(() => {
           localStorage.removeItem('auth_user_with_token');
           this.token = null;
           this.user = null;
+          this.userEvents.next(false);
           return of(false);
         })
       );
@@ -110,7 +107,7 @@ export class AuthService {
     localStorage.removeItem('auth_user_with_token');
     this.token = null;
     this.user = null;
-    this.userCrawler.next(false);
+    this.userEvents.next(false);
     if (this.redirectUrl) {
       this.router.navigateByUrl('/');
     }
@@ -118,12 +115,6 @@ export class AuthService {
 
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(`${this.url}users`, {
-      headers: this.reqHeader,
-    });
-  }
-
-  getUser(id: string): Observable<User> {
-    return this.http.get<User>(`${this.url}users/${id}`, {
       headers: this.reqHeader,
     });
   }
