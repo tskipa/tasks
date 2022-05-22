@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { tap } from 'rxjs/operators';
+import { concatMap, takeUntil, tap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 import { TaskService } from '../services/task.service';
 import { Role, Status, Task } from '../models/types';
@@ -16,6 +17,7 @@ export class TasksComponent implements OnInit {
   tasks: Task[] = [];
   allUserTasks: Task[] = [];
   checked = true;
+  private destroyEvent = new Subject<void>();
 
   constructor(
     public taskService: TaskService,
@@ -25,18 +27,27 @@ export class TasksComponent implements OnInit {
 
   ngOnInit(): void {
     this.modalService.register('taskForm');
-    this.taskService.getTasks().subscribe((res) => {
-      this.allUserTasks = res;
-      this.tasks = this.allUserTasks.filter(
-        (task) => task.userId === this.authService.user?.id
-      );
-    });
-    this.taskService.taskCrawler.subscribe((newTask) => {
-      this.allUserTasks.push(newTask);
-      this.tasks = this.allUserTasks.filter(
-        (task) => !this.checked || task.userId === this.authService.user?.id
-      );
-    });
+    this.taskService
+      .getTasks()
+      .pipe(
+        tap((res) => {
+          this.allUserTasks = res;
+          this.tasks = this.allUserTasks.filter(
+            (task) => task.userId === this.authService.user?.id
+          );
+        }),
+        concatMap(() => this.taskService.taskCrawler)
+      )
+      .pipe(
+        tap((res) => {
+          this.allUserTasks.push(res);
+          this.tasks = this.allUserTasks.filter(
+            (task) => !this.checked || task.userId === this.authService.user?.id
+          );
+        }),
+        takeUntil(this.destroyEvent)
+      )
+      .subscribe();
   }
 
   toggleTasks() {
@@ -48,6 +59,8 @@ export class TasksComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.modalService.unregister('taskForm');
+    this.destroyEvent.next();
+    this.destroyEvent.complete();
   }
 
   isAdmin(): boolean {
@@ -83,13 +96,18 @@ export class TasksComponent implements OnInit {
 
   deleteTask(e: Event, removedTask: Task) {
     e.preventDefault();
-    this.taskService.deleteTask(removedTask.id as string).subscribe(() => {
-      this.allUserTasks = this.allUserTasks.filter(
-        (task) => task.id !== removedTask.id
-      );
-      this.tasks = this.allUserTasks.filter(
-        (task) => !this.checked || task.userId === this.authService.user?.id
-      );
-    });
+    this.taskService
+      .deleteTask(removedTask.id as string)
+      .pipe(
+        tap(() => {
+          this.allUserTasks = this.allUserTasks.filter(
+            (task) => task.id !== removedTask.id
+          );
+          this.tasks = this.allUserTasks.filter(
+            (task) => !this.checked || task.userId === this.authService.user?.id
+          );
+        })
+      )
+      .subscribe();
   }
 }
