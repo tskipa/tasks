@@ -20,11 +20,6 @@ export enum Category {
   DEFAULT = 'default',
 }
 
-export interface AuthResp {
-  access_token: string;
-  userId: string;
-}
-
 export interface Task {
   id?: string;
   name: string;
