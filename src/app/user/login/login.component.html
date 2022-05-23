@@ -3,18 +3,18 @@
 </app-alert>
 
 <form
-  class="bg-gray-600 -mx-2 p-2 rounded"
+  class="bg-gray-300 -mx-2 p-2 rounded"
   #loginForm="ngForm"
   (ngSubmit)="login()"
 >
   <div class="mb-3">
-    <label class="inline-block mb-2 text-gray-200">Email</label>
+    <label class="inline-block mb-2">Email</label>
     <input
       #email="ngModel"
       type="email"
       name="email"
       [(ngModel)]="credentials.email"
-      class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition duration-500 focus:outline-none rounded bg-transparent focus:border-blue-400"
+      class="block w-full py-1.5 px-3 border border-gray-400 transition duration-500 focus:outline-none rounded bg-transparent focus:border-blue-400"
       required
       pattern="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
     />
@@ -26,13 +26,13 @@
     </p>
   </div>
   <div class="mb-3">
-    <label class="inline-block mb-2 text-gray-200">Password</label>
+    <label class="inline-block mb-2">Password</label>
     <input
       #password="ngModel"
       type="password"
       name="password"
       [(ngModel)]="credentials.password"
-      class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition duration-500 focus:outline-none rounded bg-transparent focus:border-blue-400"
+      class="block w-full py-1.5 px-3 border border-gray-400 transition duration-500 focus:outline-none rounded bg-transparent focus:border-blue-400"
       required
     />
     <p

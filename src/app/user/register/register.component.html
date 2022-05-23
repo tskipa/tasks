@@ -3,28 +3,28 @@
 </app-alert>
 
 <form
-  class="bg-gray-600 -mx-2 p-2 rounded"
+  class="bg-gray-300 -mx-2 p-2 rounded"
   [formGroup]="registrationForm"
   (ngSubmit)="register()"
 >
   <div class="mb-3">
-    <label class="inline-block mb-2 text-gray-200">Name</label>
+    <label class="inline-block mb-2">Name</label>
     <app-input [control]="name"></app-input>
   </div>
   <div class="mb-3">
-    <label class="inline-block mb-2 text-gray-200">Email</label>
+    <label class="inline-block mb-2">Email</label>
     <app-input [control]="email" type="email"></app-input>
   </div>
   <div class="mb-3">
-    <label class="inline-block mb-2 text-gray-200">Role</label>
+    <label class="inline-block mb-2">Role</label>
     <app-select [control]="role" [data]="roles"></app-select>
   </div>
   <div class="mb-3">
-    <label class="inline-block mb-2 text-gray-200">Password</label>
+    <label class="inline-block mb-2">Password</label>
     <app-input [control]="password" type="password"></app-input>
   </div>
   <div class="mb-3">
-    <label class="inline-block mb-2 text-gray-200">Confirm Password</label>
+    <label class="inline-block mb-2">Confirm Password</label>
     <app-input [control]="confirmPassword" type="password"></app-input>
   </div>
   <button

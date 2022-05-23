@@ -3,35 +3,35 @@
   <app-alert *ngIf="showAlert" [color]="alertColor"> {{ alertMsg }} </app-alert>
 
   <form
-    class="bg-gray-600 -mx-2 p-2 rounded"
+    class="-mx-2 p-2 rounded"
     [formGroup]="taskForm"
     (ngSubmit)="submitTask()"
   >
     <div class="mb-1">
-      <label class="inline-block mb-2 text-gray-200">Name</label>
+      <label class="inline-block mb-2">Name</label>
       <app-input [control]="name"></app-input>
     </div>
     <div class="mb-1">
-      <label class="inline-block mb-2 text-gray-200">Description</label>
+      <label class="inline-block mb-2">Description</label>
       <app-input [control]="description"></app-input>
     </div>
     <div class="mb-1">
-      <label class="inline-block mb-2 text-gray-200">User</label>
+      <label class="inline-block mb-2">User</label>
       <app-select [control]="userEmail" [data]="users"></app-select>
     </div>
     <div class="mb-1">
-      <label class="inline-block mb-2 text-gray-200">Status</label>
+      <label class="inline-block mb-2">Status</label>
       <app-select [control]="status" [data]="statuses"></app-select>
     </div>
     <div class="mb-1">
-      <label class="inline-block mb-2 text-gray-200">Category</label>
+      <label class="inline-block mb-2">Category</label>
       <app-select [control]="category" [data]="categories"></app-select>
     </div>
 
     <button
       type="submit"
       [disabled]="taskForm.invalid || inSubmission"
-      class="block w-full disabled:opacity-50 bg-blue-400 text-white py-1.5 px-3 rounded transition hover:bg-blue-500 disabled:bg-blue-300"
+      class="block w-full disabled:opacity-50 bg-blue-400 text-white mt-3 py-1.5 px-3 rounded transition hover:bg-blue-500 disabled:bg-blue-300"
     >
       Submit
     </button>
