@@ -15,6 +15,7 @@ import { TaskService } from 'src/app/services/task.service';
 })
 export class TaskFormComponent implements OnInit {
   name = new FormControl('', [Validators.required, Validators.minLength(3)]);
+  taskDate = new FormControl('');
   description = new FormControl('');
   userEmail = new FormControl('', [Validators.required]);
   status = new FormControl('', [Validators.required]);
@@ -41,6 +42,7 @@ export class TaskFormComponent implements OnInit {
 
   taskForm = new FormGroup({
     name: this.name,
+    taskDate: this.taskDate,
     description: this.description,
     userEmail: this.userEmail,
     status: this.status,
@@ -50,11 +52,12 @@ export class TaskFormComponent implements OnInit {
   ngOnInit(): void {}
 
   submitTask() {
-    const { name, description, userEmail, status, category } =
+    const { name, taskDate, description, userEmail, status, category } =
       this.taskForm.value;
     const user = this.users.find((user) => user.email === userEmail);
     const task = {
       name,
+      taskDate,
       description,
       userId: user?.id,
       status,
